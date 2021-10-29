@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/security 
+	http://www.springframework.org/schema/security/spring-security.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util.xsd">
+    
+    <!-- 검사 URL -->
+	<http pattern="/**/*.js" security="none"/>
+	<http pattern="/**/*.css" security="none"/>
+	<http pattern="/images/**" security="none"/>
+
+	<http pattern="/topic/chat/**" security="none"/>
+	<http pattern="/chat-websocket/**" security="none"/>
+
+    <http auto-config="true">
+		
+		<csrf disabled="true" />
+
+    	<intercept-url pattern="/main.do" access="permitAll" />
+        <intercept-url pattern="/chat/**" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/signup.do" access="permitAll" />
+        <intercept-url pattern="/home.do" access="permitAll" />
+        <intercept-url pattern="/**" access="permitAll" />
+        
+
+        
+        <form-login login-page="/login.do"
+                    default-target-url="/main.do"
+                    login-processing-url="/process"
+                   
+                    username-parameter="loginid"
+                    password-parameter="loginpwd" />
+        <logout logout-url="/logout"
+                logout-success-url="/main.do" />
+                
+        <access-denied-handler error-page="/access_denied_page.do"/>
+
+
+
+    </http>
+    
+
+    <jdbc-user-service data-source-ref="dataSource" id="userService"
+    users-by-username-query="SELECT USER_ID as loginid, PASSWORD as loginpwd, ENABLED FROM USER_INFO WHERE USER_ID=?"
+    authorities-by-username-query="SELECT USER_ID as loginid, AUTHORITY FROM USER_INFO WHERE USER_ID=?"
+	/>
+
+	<authentication-manager>
+    	<authentication-provider ref="userLoginAuthenticationProvider">
+    	</authentication-provider>
+	</authentication-manager>
+
+
+
+
+    
+    
+    
+
+    
+</beans:beans>

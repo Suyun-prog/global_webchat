@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- JAVA와 연결할 Mapper 파일 설정 -->
+<mapper namespace="poly.persistance.mapper.UserInfoMapper">
+
+<!-- 회원 가입하기(회원정보 등록하기) -->
+<insert id ="insertUserInfo" parameterType="UserInfoDTO">
+	INSERT INTO USER_INFO
+		(
+			USER_ID,
+			USER_NAME,
+			PASSWORD,
+			EMAIL,
+			REG_DT,
+			COUNTRY,
+			AUTHORITY,
+			ENABLED
+
+		)
+		VALUES(
+			#{user_id},
+			#{user_name},
+			#{password},
+			#{email},
+			SYSDATE,
+			#{country},
+			'ROLE_USER',
+			1
+		)
+</insert>
+		
+		<!-- 이메일로 회원가입 중복 방지하기 -->
+		<select id="getUserEmailExists" parameterType="UserInfoDTO" resultType="UserInfoDTO">
+			SELECT DECODE(COUNT(1), 0, 'N', 'Y') AS EXISTS_YN
+			FROM USER_INFO
+			WHERE EMAIL = #{email}
+		</select>
+		
+
+
+</mapper>
